@@ -1,6 +1,11 @@
-﻿using MD5Hash;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+using System.Linq;
+using MD5Hash;
 
-namespace FileManifestTool;
+namespace Ryancdotnet.FileManifestTool;
 
 class Program
 {
@@ -14,7 +19,13 @@ class Program
         List<FileData> fileDatas = GetFiles(source, indexKeeper, false);
 
         //Write out
-        File.WriteAllLines($@"{source}\.manifest", fileDatas.Select(fd => $"{fd.BasicMetaHash} | {fd.FullMetaHash} | {fd.FileNumber} | {fd.File} | {fd.Size} | {fd.Created} | {fd.LastModified}").ToList());
+        StringBuilder fileBuilder = new StringBuilder();
+        fileBuilder.AppendLine("RyanC.net File Manifest Tool Manifest");
+        fileBuilder.AppendLine("0.1.0");
+
+        fileDatas.ForEach(fd => fileBuilder.AppendLine($"{fd.BasicMetaHash} | {fd.FullMetaHash} | {fd.FileNumber} | {Path.GetFileName(fd.File)} | {Path.GetDirectoryName(fd.File)} | {fd.Size} | {fd.Created} | {fd.LastModified}"));
+
+        File.WriteAllText($@"{source}\.manifest", fileBuilder.ToString());
     }
 
     private static List<FileData> GetFiles(string directory, IndexKeeper indexKeeper, bool shouldHash, bool recursive = true)

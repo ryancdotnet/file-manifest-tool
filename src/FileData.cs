@@ -1,4 +1,6 @@
-namespace FileManifestTool;
+using System;
+
+namespace Ryancdotnet.FileManifestTool;
 
 public class FileData
 {

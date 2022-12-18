@@ -1,4 +1,4 @@
-namespace FileManifestTool;
+namespace Ryancdotnet.FileManifestTool;
 
 public class IndexKeeper
 {

@@ -4,9 +4,11 @@
     <AssemblyName>FileManifestTool</AssemblyName>
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
-    <RootNamespace>FileManifestTool</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Ryancdotnet.FileManifestTool</RootNamespace>
     <Nullable>enable</Nullable>
+    <Version>0.1.0</Version>
+    <Copyright>RyanC.net © 2022</Copyright>
+    <Authors>Ryan C</Authors>
   </PropertyGroup>
 
   <ItemGroup>
