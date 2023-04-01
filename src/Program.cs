@@ -11,8 +11,21 @@ class Program
 {
     public static void Main(string[] args)
     {
-        Console.WriteLine("Enter source directory:");
-        string source = Console.ReadLine();
+        string source = args.Length > 0 && Path.Exists(args[0]) ? args[0] : null;
+        string manifestFile = args.Length > 1 ? args[1] : null;
+
+        if (source == null)
+        {
+            Console.WriteLine("Enter source directory:");
+            source = Console.ReadLine();
+        }
+
+        if (manifestFile == null)
+        {
+            Console.WriteLine("Enter manifest output directory (press enter for default) (DEFAULT: {source-directory}\\.manifest):");
+            manifestFile = Console.ReadLine();
+            manifestFile = String.IsNullOrWhiteSpace(manifestFile) ? $@"{source}\.manifest" : manifestFile;
+        }
 
         IndexKeeper indexKeeper = new IndexKeeper();
 
@@ -25,7 +38,7 @@ class Program
 
         fileDatas.ForEach(fd => fileBuilder.AppendLine($"{fd.BasicMetaHash} | {fd.FullMetaHash} | {fd.FileNumber} | {Path.GetFileName(fd.File)} | {Path.GetDirectoryName(fd.File)} | {fd.Size} | {fd.Created} | {fd.LastModified}"));
 
-        File.WriteAllText($@"{source}\.manifest", fileBuilder.ToString());
+        File.WriteAllText(manifestFile, fileBuilder.ToString());
     }
 
     private static List<FileData> GetFiles(string directory, IndexKeeper indexKeeper, bool shouldHash, bool recursive = true)
@@ -60,6 +73,8 @@ class Program
             LastModified = fileInfo.LastWriteTimeUtc,
             Size = fileInfo.Length
         };
+
+        //TODO: Possibly read EXIF data if exists, output as new columns
 
         fileData.BasicMetaHash = CalculateBasicMetaHash(fileData);
         fileData.FullMetaHash = CalculateFullMetaHash(fileData);
