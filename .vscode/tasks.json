@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/file-manifest-tool.csproj",
+                "${workspaceFolder}\\src\\FileManifestTool.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/file-manifest-tool.csproj",
+                "${workspaceFolder}\\src\\FileManifestTool.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/file-manifest-tool.csproj"
+                "${workspaceFolder}\\src\\FileManifestTool.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
