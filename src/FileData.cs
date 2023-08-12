@@ -17,4 +17,7 @@ public class FileData
     public string BasicMetaHash { get; set; }
 
     public string Hash { get; set; }
+    
+    //Image/Picture/Video Metadata
+    public DateTime DateTaken { get; set; }
 }
