@@ -36,7 +36,7 @@ class Program
         fileBuilder.AppendLine("RyanC.net File Manifest Tool Manifest");
         fileBuilder.AppendLine("0.1.0");
 
-        fileDatas.ForEach(fd => fileBuilder.AppendLine($"{fd.BasicMetaHash} | {fd.FullMetaHash} | {fd.FileNumber} | {Path.GetFileName(fd.File)} | {Path.GetDirectoryName(fd.File)} | {fd.Size} | {fd.Created} | {fd.LastModified}"));
+        fileDatas.ForEach(fd => fileBuilder.AppendLine($"{fd.BasicMetaHash} | {fd.FullMetaHash} | {fd.FileNumber} | {Path.GetFileName(fd.File)} | {Path.GetDirectoryName(fd.File)} | {fd.Size} | {fd.Created} | {fd.LastModified} | {fd.DateTaken}"));
 
         File.WriteAllText(manifestFile, fileBuilder.ToString());
     }
@@ -74,7 +74,26 @@ class Program
             Size = fileInfo.Length
         };
 
-        //TODO: Possibly read EXIF data if exists, output as new columns
+
+        //TODO: Enable disabling EXIF reads
+        if (true && (file.ToLower().EndsWith(".heic") || file.ToLower().EndsWith(".jpg")))
+        {
+            IReadOnlyList<MetadataExtractor.Directory> metadata = MetadataExtractor.ImageMetadataReader.ReadMetadata(file);
+
+            //MetadataExtractor.Formats.Exif.ExifIfd0Directory.TagDateTime is something...
+
+            //EXIF Date/Time Tag format = "2023:01:01 23:01:01"
+            string? dateTimeTagValue = metadata.SingleOrDefault(d => d.Name == "Exif IFD0")?.Tags.SingleOrDefault(t => t.HasName && t.Name == "Date/Time")?.Description;
+
+            if (dateTimeTagValue != null)
+            {
+                string[] split = dateTimeTagValue.Split(" ")!;
+                split[0] = split[0].Replace(":", "/");
+                dateTimeTagValue = $"{split[0]} {split[1]}";
+
+                fileData.DateTaken = DateTime.Parse(dateTimeTagValue);
+            }
+        }
 
         fileData.BasicMetaHash = CalculateBasicMetaHash(fileData);
         fileData.FullMetaHash = CalculateFullMetaHash(fileData);
@@ -86,5 +105,5 @@ class Program
         => MD5Hash.Hash.GetMD5($"{Path.GetFileName(fileData.File.ToLower())}|{fileData.Size}");
 
     private static string CalculateFullMetaHash(FileData fileData)
-        => MD5Hash.Hash.GetMD5($"{Path.GetFileName(fileData.File.ToLower())}|{fileData.LastModified.Ticks}|{fileData.Size}");
+        => MD5Hash.Hash.GetMD5($"{Path.GetFileName(fileData.File.ToLower())}|{fileData.LastModified.Ticks}|{fileData.Size}|{fileData.DateTaken}");
 }
